@@ -1,0 +1,47 @@
+@model List<WorkFlowApp.Models.MamulStok>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-dark text-white fw-bold">
+        <i class="fas fa-industry"></i> Mamul Stok (Bitmiş Ürün)
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0 align-middle table-bordered">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th class="text-start" style="width: 35%;">Ürün Adı</th>
+                        <th class="bg-light text-secondary" style="width: 15%;">Devir</th>
+                        <th class="text-success" style="width: 15%;">Üretim (Giriş)</th>
+                        <th class="text-danger" style="width: 15%;">Sevk (Çıkış)</th>
+                        <th class="bg-light text-dark fw-bold" style="width: 20%;">KALAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model) {
+                        <tr>
+                            <td class="fw-bold text-dark ps-2">@item.UrunAdi</td>
+                            
+                            <td class="text-center text-secondary fw-bold bg-light">@item.Devir</td>
+
+                            <td>
+                                <input type="number" 
+                                       class="form-control form-control-sm text-center border-success fw-bold text-success" 
+                                       value="@item.Uretim" 
+                                       onchange="mamulGuncelle(this, @item.Id, 'Uretim')">
+                            </td>
+
+                            <td>
+                                <input type="number" 
+                                       class="form-control form-control-sm text-center border-danger fw-bold text-danger" 
+                                       value="@item.Sevk" 
+                                       onchange="mamulGuncelle(this, @item.Id, 'Sevk')">
+                            </td>
+
+                            <td class="text-center fw-bold fs-5 bg-light" id="kalan-@item.Id">@item.Kalan.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

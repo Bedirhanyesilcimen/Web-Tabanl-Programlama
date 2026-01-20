@@ -1,0 +1,37 @@
+@model WorkFlowApp.Models.RaporTalebi
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-plus me-2"></i> Yeni Rapor Talebi Oluştur</h5>
+        </div>
+        <div class="card-body p-4">
+            <form asp-controller="GMDenetim" asp-action="RaporTalepEt" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Rapor Konusu</label>
+                    <input asp-for="Baslik" class="form-control" placeholder="Örn: Haftalık Stok Değerlendirmesi" required />
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">İlgili Birim (Rol)</label>
+                        <select asp-for="HedefRol" class="form-select">
+                            <option value="Muhasebe">Muhasebe</option>
+                            <option value="Depo">Depo</option>
+                            <option value="Pazarlama">Pazarlama</option>
+                            <option value="Uretim">Üretim</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Son Teslim Tarihi</label>
+                        <input asp-for="SonTarih" type="datetime-local" class="form-control" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Talimat Detayları</label>
+                    <textarea asp-for="Icerik" class="form-control" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">TALEBİ GÖNDER</button>
+            </form>
+        </div>
+    </div>
+</div>

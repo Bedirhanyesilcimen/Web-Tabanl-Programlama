@@ -1,0 +1,8 @@
+<label>Ürün Seçin (Depo Listesinden)</label>
+<input list="urunListesi" name="UrunAdi" class="form-control" placeholder="Ara...">
+<datalist id="urunListesi">
+    @foreach (var urun in ViewBag.Urunler)
+    {
+        <option value="@urun">@urun</option>
+    }
+</datalist>

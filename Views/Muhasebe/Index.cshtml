@@ -1,0 +1,148 @@
+@model List<WorkFlowApp.Models.SatinalmaTalep>
+@{ ViewData["Title"] = "Muhasebe Yönetim Paneli"; }
+
+@{ 
+    var ekKayitlar = ViewBag.MuhasebeListesi as List<WorkFlowApp.Models.MuhasebeKayit> ?? new List<WorkFlowApp.Models.MuhasebeKayit>(); 
+}
+
+<div class="container-fluid mt-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-danger text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <h6><i class="fas fa-file-invoice-dollar"></i> Ödenecek Faturalar</h6>
+                    <h3 class="fw-bold">₺ @ekKayitlar.Where(x => x.Tur == "Fatura").Sum(x => x.Tutar).ToString("N0")</h3>
+                    <small>Fatura Toplamı</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <h6><i class="fas fa-hand-holding-usd"></i> Bekleyen Alacaklar</h6>
+                    <h3 class="fw-bold">₺ @ekKayitlar.Where(x => x.Tur == "Tahsilat").Sum(x => x.Tutar).ToString("N0")</h3>
+                    <small>Tahsilat Bekleyen</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <h6><i class="fas fa-shopping-cart"></i> Onaylanacak Satın Alma</h6>
+                    <h3 class="fw-bold">@Model.Count(x => x.Durum == "Muhasebe Sipariş Geçti")</h3>
+                    <small>Bekleyen İşlem</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <h6><i class="fas fa-wallet"></i> Kasa Durumu</h6>
+                    <h3 class="fw-bold">₺ 850.000</h3>
+                    <small>Anlık Bakiye</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!User.IsInRole("GenelMudur"))
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white"><h6 class="mb-0 fw-bold">Hızlı Fatura/Tahsilat Girişi</h6></div>
+            <div class="card-body">
+                <form asp-controller="Muhasebe" asp-action="Kaydet" method="post" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="Unvan" class="form-control" placeholder="Firma/Fatura Adı" required />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" name="Tutar" class="form-control" placeholder="Tutar" step="0.01" required />
+                    </div>
+                    <div class="col-md-3">
+                        <select name="Tur" class="form-select">
+                            <option value="Fatura">Ödenecek Fatura</option>
+                            <option value="Tahsilat">Bekleyen Tahsilat</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-dark w-100">Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-dark fw-bold"><i class="fas fa-file-signature me-2"></i> Cari Hareket Listesi</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tür</th>
+                                <th>Ünvan</th>
+                                <th>Tutar</th>
+                                <th class="text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ek in ekKayitlar)
+                            {
+                                <tr>
+                                    <td><span class="badge @(ek.Tur == "Fatura" ? "bg-danger" : "bg-success")">@ek.Tur</span></td>
+                                    <td>@ek.Unvan</td>
+                                    <td class="fw-bold">₺ @ek.Tutar.ToString("N2")</td>
+                                    <td class="text-center">
+                                        @if (!User.IsInRole("GenelMudur"))
+                                        {
+                                            <form asp-controller="Muhasebe" asp-action="Sil" method="post">
+                                                <input type="hidden" name="id" value="@ek.Id" />
+                                                <button class="btn btn-sm btn-outline-danger border-0"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary fw-bold"><i class="fas fa-list-alt me-2"></i> Satın Alma Onayı</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Malzeme</th>
+                                <th>Miktar</th>
+                                <th class="text-center">Onay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Where(x => x.Durum == "Muhasebe Sipariş Geçti"))
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.UrunAdi</td>
+                                    <td>@item.Miktar @item.Birim</td>
+                                    <td class="text-center">
+                                        <form action="/Siparis/DurumGuncelle" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button class="btn btn-sm btn-outline-primary">Sipariş Geçildi</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,116 @@
+﻿@model WorkFlowApp.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+}
+
+<div class="container-fluid">
+    <div class="alert @(userRole == "Admin" ? "alert-primary" : "alert-success") border-0 shadow-sm mb-4">
+        <h4 class="alert-heading fw-bold">
+           
+
+    <div class="row g-4">
+
+        @if (userRole == "Admin")
+        {
+            <div class="col-md-3">
+                <a href="/Personel/Index" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm border-0 bg-warning bg-opacity-10 border-start border-warning border-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
+                            <h5 class="fw-bold text-dark">Personel Yönetimi</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (userRole == "Admin" || userRole == "Depo")
+        {
+            <div class="col-md-3">
+                <a href="/Depo/TekstilPamuklu" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm border-0 bg-primary bg-opacity-10 border-start border-primary border-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold text-dark">Depo & Stok</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (userRole == "Admin" || userRole == "Pazarlama")
+        {
+            <div class="col-md-3">
+                <a href="/Pazarlama/Index" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm border-0 bg-info bg-opacity-10 border-start border-info border-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-briefcase fa-3x text-info mb-3"></i>
+                            <h5 class="fw-bold text-dark">Pazarlama</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (userRole == "Admin" || userRole == "Kaplama")
+        {
+            <div class="col-md-3">
+                <a href="/Kaplama/Index" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm border-0 bg-danger bg-opacity-10 border-start border-danger border-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-fill-drip fa-3x text-danger mb-3"></i>
+                            <h5 class="fw-bold text-dark">Kaplama Bölümü</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        @if (userRole == "Admin" || userRole == "Muhasebe")
+        {
+            <div class="col-md-3">
+                <a href="/Muhasebe/Index" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm border-0 bg-success bg-opacity-10 border-start border-success border-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-calculator fa-3x text-success mb-3"></i>
+                            <h5 class="fw-bold text-dark">Muhasebe & Finans</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+    </div>
+
+    @if (userRole == "Admin" || userRole == "Depo")
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-dark text-white fw-bold">Anlık Stok Durum Özeti</div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <h3 class="fw-bold">@ViewBag.TekstilStok</h3>
+                                <span class="badge bg-primary">Tekstil</span>
+                            </div>
+                            <div class="col-md-3">
+                                <h3 class="fw-bold">@ViewBag.PaketlemeStok</h3>
+                                <span class="badge bg-warning text-dark">Paketleme</span>
+                            </div>
+                            <div class="col-md-3">
+                                <h3 class="fw-bold">@ViewBag.MamulStok</h3>
+                                <span class="badge bg-success">Mamul</span>
+                            </div>
+                            <div class="col-md-3">
+                                <h3 class="fw-bold">@ViewBag.IplikStok</h3>
+                                <span class="badge bg-danger">İplik</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

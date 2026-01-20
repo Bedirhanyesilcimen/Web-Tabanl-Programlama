@@ -1,0 +1,135 @@
+@model List<WorkFlowApp.Models.AppUser>
+@{ ViewData["Title"] = "Personel Yönetimi"; }
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark">
+                <i class="fas fa-users-cog me-2 text-primary"></i> Personel Portalı
+            </h5>
+            
+            @if (!User.IsInRole("GenelMudur"))
+            {
+                <button type="button" class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#personelEkleModal">
+                    <i class="fas fa-user-plus me-1"></i> Yeni Personel Kaydı
+                </button>
+            }
+            else
+            {
+                <span class="badge bg-info text-dark p-2 shadow-sm">
+                    <i class="fas fa-eye me-1"></i> İzleme Yetkisi Aktif
+                </span>
+            }
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary">
+                        <tr>
+                            <th class="ps-4">AD SOYAD</th>
+                            <th>KULLANICI ADI</th>
+                            <th>GÖREV / ROL</th>
+                            <th>DURUM</th>
+                            <th class="text-center">İŞLEMLER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; border: 1px solid #eee;">
+                                            <i class="fas fa-user text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@item.FullName</div>
+                                            <small class="text-muted">ID: #@item.Id</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="text-muted">@@</span>@item.Username</td>
+                                <td>
+                                    <span class="badge @(item.Role == "Admin" ? "bg-danger" : "bg-info text-dark") px-3 py-2">
+                                        <i class="fas fa-tag me-1 small"></i> @item.Role
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">
+                                        <i class="fas fa-check-circle me-1"></i> Aktif
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if (!User.IsInRole("GenelMudur"))
+                                    {
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary border-0"><i class="fas fa-edit"></i></button>
+                                            <form asp-controller="Personel" asp-action="Sil" method="post" onsubmit="return confirm('Bu personeli sistemden silmek istediğinize emin misiniz?')" style="display:inline;">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger border-0"><i class="fas fa-trash-alt"></i></button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small italic">Yetki Kısıtlı</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!User.IsInRole("GenelMudur"))
+{
+    <div class="modal fade" id="personelEkleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <form asp-controller="Personel" asp-action="Ekle" method="post">
+                    <div class="modal-header bg-primary text-white py-3">
+                        <h5 class="modal-title fw-bold"><i class="fas fa-user-plus me-2"></i> Yeni Personel Ekle</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small">AD SOYAD</label>
+                            <input type="text" name="FullName" class="form-control form-control-lg fs-6" placeholder="Örn: Ahmet Yılmaz" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small">KULLANICI ADI</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">@@</span>
+                                <input type="text" name="Username" class="form-control form-control-lg fs-6 border-start-0" placeholder="ayilmaz" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small">ŞİFRE</label>
+                            <input type="password" name="Password" class="form-control form-control-lg fs-6" placeholder="••••••••" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small">GÖREV / ROL</label>
+                            <select name="Role" class="form-select form-select-lg fs-6">
+                                <option value="Admin">Admin (Tam Yetki)</option>
+                                <option value="GenelMudur">Genel Müdür (Denetçi)</option>
+                                <option value="Depo">Depo Sorumlusu</option>
+                                <option value="Muhasebe">Muhasebe & Finans</option>
+                                <option value="Pazarlama">Pazarlama & Satış</option>
+                                <option value="Kaplama">Kaplama Postabaşı</option>
+                                <option value="Tekstil">Tekstil Üretim</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-top-0 py-3">
+                        <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Vazgeç</button>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">Personeli Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

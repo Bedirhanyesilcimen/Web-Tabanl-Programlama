@@ -1,0 +1,19 @@
+@model IEnumerable<WorkFlowApp.Models.SatinalmaTalep>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
+        <td>
+            @* Sayısal karşılaştırmaları tırnağa alıyoruz *@
+            @if (item.Durum == "Genel Müdür Onayında" || item.Durum == "0")
+            {
+                <span class="badge bg-warning">GM Onayı Bekliyor</span>
+            }
+            else if (item.Durum == "Muhasebe Sipariş Geçti" || item.Durum == "1")
+            {
+                <span class="badge bg-primary">Sipariş Geçildi</span>
+            }
+        </td>
+    </tr>
+}

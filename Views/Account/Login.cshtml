@@ -1,0 +1,116 @@
+@{
+    Layout = null; // Sidebar ve Navbar bu sayfada gözükmesin diye null yapıyoruz
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giriş Yap - WorkFlow Yönetim Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            background: #ffffff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        .login-icon {
+            font-size: 3.5rem;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+        }
+        .btn-login {
+            background: #1e3c72;
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-login:hover {
+            background: #2a5298;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            background-color: #f8f9fa;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .error-msg {
+            background-color: #fff5f5;
+            color: #e03131;
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #e03131;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card text-center">
+        <div class="login-icon">
+            <i class="fas fa-cubes"></i>
+        </div>
+        <h2 class="fw-bold text-dark mb-1">Aynen Eldiven</h2>
+        <p class="text-muted mb-4">Yönetim Sistemi</p>
+
+        @if (ViewBag.Hata != null)
+        {
+            <div class="error-msg text-start">
+                <i class="fas fa-exclamation-triangle me-2"></i> @ViewBag.Hata
+            </div>
+        }
+
+        <form action="/Account/Login" method="post">
+            <div class="mb-3 text-start">
+                <label class="form-label">Kullanıcı Adı</label>
+                <div class="input-group">
+                    <span class="input-group-text border-0 bg-light"><i class="fas fa-user text-muted"></i></span>
+                    <input type="text" name="kadi" class="form-control border-0 bg-light" placeholder="Kullanıcı adınız" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4 text-start">
+                <label class="form-label">Şifre</label>
+                <div class="input-group">
+                    <span class="input-group-text border-0 bg-light"><i class="fas fa-lock text-muted"></i></span>
+                    <input type="password" name="sifre" class="form-control border-0 bg-light" placeholder="Şifreniz" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login w-100 shadow-sm">
+                SİSTEME GİRİŞ YAP <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </form>
+
+        <div class="mt-5 text-muted small">
+            &copy; 2026 Aynen Eldiven | Tüm Hakları Saklıdır.
+        </div>
+    </div>
+
+</body>
+</html>

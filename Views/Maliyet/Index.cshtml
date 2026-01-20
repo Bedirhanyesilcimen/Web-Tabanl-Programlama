@@ -1,0 +1,70 @@
+@model WorkFlowApp.Models.MaliyetViewModel
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between mb-4">
+        <h2><i class="fa-solid fa-calculator text-primary"></i> Maliyet Analiz Merkezi</h2>
+        <a href="/Maliyet/Seed" class="btn btn-warning"><i class="fa fa-database"></i> Örnek Veri Yükle</a>
+    </div>
+
+    <ul class="nav nav-tabs" id="maliyetTab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fiyatlar" type="button">💵 Hammadde Fiyatları</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#receteler" type="button">🧪 Ürün Reçeteleri</button>
+        </li>
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0 bg-white shadow-sm">
+        
+        <div class="tab-pane fade show active" id="fiyatlar">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Hammadde</th>
+                        <th>Birim Fiyat</th>
+                        <th>Para Birimi</th>
+                        <th>Son Güncelleme</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Fiyatlar)
+                    {
+                        <tr>
+                            <td><strong>@item.HammaddeAdi</strong></td>
+                            <td>@item.BirimFiyat</td>
+                            <td><span class="badge bg-success">@item.ParaBirimi</span></td>
+                            <td>@item.GuncellemeTarihi.ToShortDateString()</td>
+                        </tr>
+                    }
+                    @if(Model.Fiyatlar.Count == 0) { <tr><td colspan="4">Veri yok.</td></tr> }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="receteler">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Bileşen (İçerik)</th>
+                        <th>Kullanım Miktarı</th>
+                        <th>Birim</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Receteler)
+                    {
+                        <tr>
+                            <td>@item.UrunAdi</td>
+                            <td>@item.BilesenAdi</td>
+                            <td>@item.KullanimMiktari</td>
+                            <td>@item.Birim</td>
+                        </tr>
+                    }
+                    @if(Model.Receteler.Count == 0) { <tr><td colspan="4">Veri yok.</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

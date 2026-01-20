@@ -1,0 +1,108 @@
+@model WorkFlowApp.Models.PaketlemeViewModel
+
+<div class="container-fluid">
+    <h3 class="text-success mb-4"><i class="fa-solid fa-box-open"></i> Hızlı Paketleme Ekranı</h3>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="fa fa-dolly"></i> Üretim Girişi
+                </div>
+                <div class="card-body">
+                    <form action="/Paketleme/Paketle" method="post">
+                        
+                        <div class="mb-4">
+                            <label class="fw-bold form-label">Ürün Seçimi</label>
+                            <input class="form-control form-control-lg" list="urunListesiOptions" name="urunAdi" placeholder="Ürün adı yazın veya listeden seçin..." required autocomplete="off">
+                            <datalist id="urunListesiOptions">
+                                @foreach (var urun in Model.DepodakiUrunler)
+                                {
+                                    <option value="@urun"></option>
+                                }
+                            </datalist>
+                            <small class="text-muted">Depodaki ürünlerden otomatik tamamlar.</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold form-label">Hazırlanan Koli</label>
+                                <input type="number" name="koli" class="form-control form-control-lg border-primary" required placeholder="0" autofocus>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold form-label">Koli İçi Adet (Çift)</label>
+                                <div class="input-group">
+                                    <input type="number" id="koliIciInput" name="koliIci" class="form-control" value="240" readonly style="background-color: #e9ecef;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="istisnaCheck" onchange="kilitAc()">
+                            <label class="form-check-label text-danger fw-bold" for="istisnaCheck">
+                                <i class="fa fa-exclamation-triangle"></i> İstisnai Durum (Koli içi standart değil)
+                            </label>
+                        </div>
+
+                        <button class="btn btn-success w-100 py-3 fw-bold fs-5">
+                            <i class="fa fa-check-circle"></i> Depoya Gönder & Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">Son Yapılan Paketlemeler</div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Ürün</th>
+                                <th>Koli</th>
+                                <th>İç Adet</th>
+                                <th>Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model.GecmisUretimler != null) {
+                                foreach(var item in Model.GecmisUretimler) {
+                                    <tr>
+                                        <td>@item.Tarih.ToString("HH:mm")</td>
+                                        <td class="fw-bold">@item.UrunAdi</td>
+                                        <td><span class="badge bg-primary fs-6">@item.KoliAdedi</span></td>
+                                        <td class="text-muted">x @item.KoliIciAdet</td>
+                                        <td class="fw-bold text-success">@(item.KoliAdedi * item.KoliIciAdet) Çift</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // İstisna kutucuğuna basınca kilidi açan kod
+    function kilitAc() {
+        var checkbox = document.getElementById('istisnaCheck');
+        var input = document.getElementById('koliIciInput');
+
+        if (checkbox.checked) {
+            // Kilidi kaldır, rengi beyaz yap
+            input.removeAttribute('readonly');
+            input.style.backgroundColor = "white";
+            input.focus(); // İmleci oraya odakla
+        } else {
+            // Kilidi geri tak, rengi gri yap, değeri 240'a döndür
+            input.setAttribute('readonly', true);
+            input.style.backgroundColor = "#e9ecef";
+            input.value = "240";
+        }
+    }
+</script>

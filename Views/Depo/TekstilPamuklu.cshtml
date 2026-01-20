@@ -1,0 +1,120 @@
+@model List<WorkFlowApp.Models.TekstilStok>
+@{ 
+    ViewData["Title"] = "Pamuklu Takip"; 
+    var secilenTarih = (DateTime)ViewBag.SecilenTarih;
+    bool isGM = User.IsInRole("GenelMudur");
+}
+
+<div class="container-fluid mt-3">
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body py-3">
+            <div class="row align-items-center g-3">
+                <div class="col-md-3">
+                    <h3 class="text-primary fw-bold mb-0"><i class="fas fa-seedling"></i> Pamuklu Bölümü</h3>
+                </div>
+
+                <div class="col-md-5 d-flex justify-content-center">
+                    <form action="/Depo/TekstilPamuklu" method="get" class="d-flex align-items-center gap-2 bg-light p-2 rounded border">
+                        <label class="fw-bold text-secondary mb-0"><i class="fas fa-calendar-alt"></i> Tarih:</label>
+                        <input type="date" name="tarih" class="form-control form-control-sm fw-bold text-center" 
+                               value="@secilenTarih.ToString("yyyy-MM-dd")" onchange="this.form.submit()" style="width: 150px;">
+                    </form>
+                </div>
+
+                <div class="col-md-4 d-flex justify-content-end">
+                    @if (!isGM) {
+                        <form action="/Depo/TekstilExcelYukle" method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-center">
+                            <input type="hidden" name="tarihSecimi" value="@secilenTarih.ToString("yyyy-MM-dd")">
+                            <input type="file" name="excelDosyasi" class="form-control form-control-sm" required accept=".xlsx, .xls">
+                            <button class="btn btn-sm btn-success fw-bold text-nowrap"><i class="fas fa-upload"></i> YÜKLE</button>
+                        </form>
+                    } else {
+                        <div class="badge bg-info text-dark p-2 shadow-sm"><i class="fas fa-eye me-1"></i> Genel Müdür / İzleme Modu</div>
+                    }
+                </div>
+
+                <div class="col-12 d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                    <div class="input-group w-50 shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" id="pamukSearch" class="form-control form-control-sm border-start-0" placeholder="Tabloda ürün veya kategori ara..." onkeyup="tabloFiltrele('pamukSearch')">
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="zeroToggle" onchange="toggleZeroRows()" style="cursor: pointer;">
+                        <label class="form-check-label fw-bold text-muted small" for="zeroToggle">Sıfırları Gizle</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(TempData["Mesaj"] != null) { <div class="alert alert-success shadow-sm text-center fw-bold">@TempData["Mesaj"]</div> }
+
+    <ul class="nav nav-tabs fw-bold" id="myTab" role="tablist">
+        <li class="nav-item"><button class="nav-link active" id="eldiven-tab" data-bs-toggle="tab" data-bs-target="#eldiven"><i class="fas fa-mitten text-primary"></i> Eldiven Üretim</button></li>
+        <li class="nav-item"><button class="nav-link" id="tamir-tab" data-bs-toggle="tab" data-bs-target="#tamir"><i class="fas fa-tools text-danger"></i> Tamir</button></li>
+        <li class="nav-item"><button class="nav-link" id="brode-tab" data-bs-toggle="tab" data-bs-target="#brode"><i class="fas fa-paint-brush text-warning"></i> Brode</button></li>
+        <li class="nav-item"><button class="nav-link" id="iplik-tab" data-bs-toggle="tab" data-bs-target="#iplik"><i class="fas fa-spool text-dark"></i> İplik</button></li>
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0 bg-white shadow-sm" id="myTabContent">
+        <div class="tab-pane fade show active" id="eldiven">
+            <div class="row">
+                <div class="col-lg-4">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.AltKategori == "Kesilmiş").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "✂️ Kesilmiş" }, { "Renk", "primary" } })</div>
+                <div class="col-lg-4">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.AltKategori == "Overloklu").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "🧵 Overloklu" }, { "Renk", "info" } })</div>
+                <div class="col-lg-4">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.AltKategori == "Çevrilmiş").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "🔄 Çevrilmiş" }, { "Renk", "success" } })</div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="tamir">
+             <div class="row">
+                <div class="col-lg-6">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.AltKategori == "Yapılacak Tamir").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "⏳ Yapılacak" }, { "Renk", "danger" } })</div>
+                <div class="col-lg-6">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.AltKategori == "Yapılmış Tamir").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "✅ Yapılmış" }, { "Renk", "success" } })</div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="brode">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.Kategori == "Brode").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "🎨 Brode" }, { "Renk", "warning" } })</div>
+        <div class="tab-pane fade" id="iplik">@await Html.PartialAsync("_StokTablosu", Model.Where(x => x.Kategori == "Iplik").ToList(), new ViewDataDictionary(ViewData) { { "Baslik", "🧵 İplik" }, { "Renk", "dark" } })</div>
+    </div>
+</div>
+
+<script>
+    function tabloFiltrele(inputId) {
+        var filter = document.getElementById(inputId).value.toUpperCase();
+        document.querySelectorAll("table tbody tr").forEach(row => {
+            row.style.display = row.innerText.toUpperCase().includes(filter) ? "" : "none";
+        });
+    }
+
+    function toggleZeroRows() {
+        var isHidden = document.getElementById("zeroToggle").checked;
+        document.querySelectorAll("table tbody tr").forEach(row => {
+            var cells = row.getElementsByTagName("td");
+            if (cells.length > 1) {
+                var lastCell = cells[cells.length - 1];
+                var amount = parseFloat(lastCell.innerText.replace(/,/g, '').trim());
+                if (amount === 0) row.style.display = isHidden ? "none" : "";
+            }
+        });
+    }
+
+    function stokGuncelle(inputElement, id, cuvalIci) {
+        if ("@isGM" === "True") {
+            alert("Genel Müdür stoklarda değişiklik yapamaz!");
+            inputElement.value = inputElement.defaultValue;
+            return;
+        }
+        var yeniCuval = inputElement.value;
+        var yeniToplam = yeniCuval * cuvalIci;
+        var toplamHucre = document.getElementById("toplam-" + id);
+        if(toplamHucre) toplamHucre.innerText = yeniToplam.toLocaleString('tr-TR');
+
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append("yeniCuvalSayisi", yeniCuval);
+
+        fetch('/Depo/StokGuncelle', { method: 'POST', body: formData }).then(response => {
+            if (response.ok) {
+                inputElement.classList.add("bg-success", "text-white");
+                setTimeout(() => inputElement.classList.remove("bg-success", "text-white"), 500);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,56 @@
+@model List<WorkFlowApp.Models.TekstilStok>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-@ViewData["Renk"] text-white fw-bold d-flex justify-content-between align-items-center">
+        <span>@ViewData["Baslik"]</span>
+        <span class="badge bg-white text-@ViewData["Renk"]">@Model.Sum(x => x.Miktar).ToString("N0") @(Model.FirstOrDefault()?.Birim ?? "Adet")</span>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Cinsi</th>
+                    @if(Model.Any(x => x.CuvalIciAdet > 0)) {
+                        <th class="text-center" style="width: 100px;">Çuval</th>
+                        <th class="text-center text-muted" style="font-size:0.85rem;">İç Adet</th>
+                        <th class="text-end">Toplam</th>
+                    } else {
+                        <th class="text-end" style="width: 150px;">Miktar</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model) {
+                    <tr>
+                        <td class="fw-bold text-dark">@item.Cinsi</td>
+                        
+                        @if(item.CuvalIciAdet > 0) 
+                        {
+                            <td class="text-center">
+                                <input type="number" 
+                                       class="form-control form-control-sm text-center fw-bold text-primary border-primary" 
+                                       value="@item.CuvalSayisi" 
+                                       onchange="stokGuncelle(this, @item.Id, @item.CuvalIciAdet)"
+                                       style="width: 80px; margin: 0 auto;">
+                            </td>
+                            <td class="text-center text-muted small">x @item.CuvalIciAdet</td>
+                            <td class="text-end fw-bold fs-6" id="toplam-@item.Id">@item.Miktar.ToString("N0")</td>
+                        }
+                        else 
+                        {
+                            if(Model.Any(x => x.CuvalIciAdet > 0)) { <td colspan="2"></td> } // Hizalama boşluğu
+                            
+                            <td class="text-end">
+                                <input type="number" 
+                                       class="form-control form-control-sm text-end fw-bold text-dark border-secondary ms-auto" 
+                                       value="@item.Miktar" 
+                                       onchange="stokMiktarGuncelle(this, @item.Id)"
+                                       style="width: 100px;">
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

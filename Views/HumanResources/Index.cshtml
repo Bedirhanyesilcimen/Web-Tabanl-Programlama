@@ -1,0 +1,114 @@
+@model WorkFlowApp.Models.IKViewModel
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="fa-solid fa-users-gear text-primary"></i> İnsan Kaynakları (İK)</h2>
+
+    <ul class="nav nav-tabs" id="ikTab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personel" type="button">👥 Personel Listesi</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#izin" type="button">🏖️ İzin Yönetimi</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#excel" type="button">⚙️ Excel / Ayarlar</button>
+        </li>
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0 bg-white shadow-sm">
+        
+        <div class="tab-pane fade show active" id="personel">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Departman</th>
+                        <th>Giriş Tarihi</th>
+                        <th>İzin Bakiyesi</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Personeller)
+                    {
+                        <tr>
+                            <td>@p.FullName</td>
+                            <td>@(p.Department?.Name ?? "-")</td>
+                            <td>@p.IseGirisTarihi.ToShortDateString()</td>
+                            <td>
+                                <span class="badge bg-info text-dark">@p.IzinBakiyesi Gün</span>
+                            </td>
+                            <td>@p.CalismaDurumu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="izin">
+            <div class="row">
+                <div class="col-md-4 border-end">
+                    <h5 class="text-primary">Yeni İzin Girişi</h5>
+                    <form action="/IK/IzinEkle" method="post">
+                        <div class="mb-3">
+                            <label>Personel Seç</label>
+                            <select name="personelId" class="form-control">
+                                @foreach(var p in Model.Personeller) { <option value="@p.Id">@p.FullName (Kalan: @p.IzinBakiyesi)</option> }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Başlangıç</label>
+                            <input type="date" name="baslangic" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Bitiş</label>
+                            <input type="date" name="bitis" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Açıklama</label>
+                            <input type="text" name="aciklama" class="form-control" placeholder="Örn: Yıllık İzin">
+                        </div>
+                        <button class="btn btn-success w-100">İzni Kaydet ve Düş</button>
+                    </form>
+                </div>
+                <div class="col-md-8">
+                    <h5 class="text-secondary">Son İzin Hareketleri</h5>
+                    <table class="table table-sm">
+                        <thead><tr><th>Personel</th><th>Tarihler</th><th>Gün</th><th>Açıklama</th></tr></thead>
+                        <tbody>
+                            @foreach(var iz in Model.IzinGecmisi)
+                            {
+                                <tr>
+                                    <td>@iz.Employee?.FullName</td>
+                                    <td>@iz.Baslangic.ToShortDateString() - @iz.Bitis.ToShortDateString()</td>
+                                    <td><span class="badge bg-secondary">@iz.GunSayisi</span></td>
+                                    <td>@iz.Aciklama</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="excel">
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> Excel dosyanızın sütun sırası şöyle olmalıdır: <br>
+                <strong>Ad Soyad | Telefon | Maaş | İzin Bakiyesi</strong> (Başlık satırı dahil)
+            </div>
+            
+            <form action="/IK/ExcelYukle" method="post" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                    <input type="file" name="dosya" class="form-control" required>
+                    <button class="btn btn-success">📤 Excel'i Yükle</button>
+                </div>
+            </form>
+
+            <hr>
+            <h5>Diğer İşlemler</h5>
+            <a href="/IK/BakiyeResetle" class="btn btn-outline-danger" onclick="return confirm('Herkesin iznini 14 güne eşitlemek istediğine emin misin?')">
+                <i class="fa fa-refresh"></i> Tüm İzinleri Yılbaşı İçin Sıfırla (14 Gün Yap)
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+@model List<WorkFlowApp.Models.SatinalmaTalep>
+@{ 
+    ViewData["Title"] = "Sipariş Takibi"; 
+    bool isYetkili = User.IsInRole("Admin") || User.IsInRole("GenelMudur") || User.IsInRole("Muhasebe") || User.IsInRole("Depo");
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0">
+                <i class="fas fa-tasks me-2"></i> 
+                @(isYetkili ? "Tüm Siparişlerin Durumu" : "Siparişlerim")
+            </h5>
+            <a href="/Siparis/SiparisVer" class="btn btn-sm btn-success fw-bold">+ Yeni Sipariş Ver</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Ürün Bilgisi</th>
+                            <th>Miktar</th>
+                            <th>Talep Eden</th>
+                            <th>Durum</th>
+                            @if(isYetkili) { <th class="text-center">İşlem</th> }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(!Model.Any()){
+                            <tr><td colspan="6" class="text-center p-5 text-muted">Kayıt bulunamadı.</td></tr>
+                        }
+                        @foreach (var item in Model) {
+                            <tr>
+                                <td>@item.TalepTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td><strong>@item.UrunAdi</strong></td>
+                                <td>@item.Miktar @item.Birim</td>
+                                <td>@item.TalepEden</td>
+                                <td>
+                                    @if(item.Durum == "Genel Müdür Onayında") { <span class="badge bg-warning text-dark">GM Onayı Bekliyor</span> }
+                                    else if(item.Durum == "Muhasebe Sipariş Geçti") { <span class="badge bg-primary">Muhasebe Sürecinde</span> }
+                                    else if(item.Durum == "Ürün Depoya Geldi") { <span class="badge bg-info text-dark">Depoda / Teslim Bekliyor</span> }
+                                    else { <span class="badge bg-success">Teslim Edildi</span> }
+                                </td>
+                                @if(isYetkili) {
+                                    <td class="text-center">
+                                        <form asp-action="DurumGuncelle" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            @if(User.IsInRole("GenelMudur") && item.Durum == "Genel Müdür Onayında") {
+                                                <button class="btn btn-sm btn-warning">Onayla (GM)</button>
+                                            }
+                                            else if(User.IsInRole("Muhasebe") && item.Durum == "Muhasebe Sipariş Geçti") {
+                                                <button class="btn btn-sm btn-primary">Sipariş Geçildi</button>
+                                            }
+                                            else if(User.IsInRole("Depo") && item.Durum == "Ürün Depoya Geldi") {
+                                                <button class="btn btn-sm btn-info text-dark">Teslim Alındı</button>
+                                            }
+                                        </form>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

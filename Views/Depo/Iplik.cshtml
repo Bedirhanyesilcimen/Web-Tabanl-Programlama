@@ -1,0 +1,143 @@
+@model List<WorkFlowApp.Models.IplikStok>
+@{ ViewData["Title"] = "İplik Stok Takip"; }
+
+<div class="container-fluid mt-3">
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow border-0 border-start border-primary border-5 mb-4">
+                <div class="card-header bg-white fw-bold text-primary">
+                    <i class="fas fa-plus-circle"></i> Yeni İplik Girişi
+                </div>
+                <div class="card-body bg-light">
+                    <form action="/Depo/IplikEkle" method="post">
+                        <div class="mb-3">
+                            <label class="fw-bold small text-muted">Firma Adı</label>
+                            <input type="text" name="firma" class="form-control fw-bold" placeholder="Örn: Akın İplik" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold small text-muted">Ürün Cinsi</label>
+                            <input type="text" name="urun" class="form-control fw-bold" placeholder="Örn: Pamuk 20/1" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small text-muted">LOT No</label>
+                                <input type="text" name="lot" class="form-control fw-bold text-center border-warning" placeholder="LOT-123" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small text-muted">Gelen KG</label>
+                                <input type="number" step="0.01" name="kilo" class="form-control fw-bold text-center border-success" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold small text-muted">Geliş Tarihi</label>
+                            <input type="date" name="tarih" class="form-control fw-bold text-center" value="@DateTime.Today.ToString("yyyy-MM-dd")" required>
+                        </div>
+                        <button class="btn btn-primary w-100 fw-bold"><i class="fas fa-save"></i> KAYDET</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-cubes"></i> Mevcut İplik Stokları</span>
+                    <span class="badge bg-warning text-dark">Toplam: @Model.Sum(x => x.KalanKg).ToString("N2") KG</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Firma</th>
+                                <th>Ürün & LOT</th>
+                                <th class="text-center">Gelen</th>
+                                <th class="text-center bg-success text-white">KALAN</th>
+                                <th class="text-end">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(!Model.Any()) {
+                                <tr><td colspan="6" class="text-center text-muted py-4"><i>Depoda kayıtlı iplik yok.</i></td></tr>
+                            }
+                            @foreach(var item in Model) {
+                                <tr>
+                                    <td class="small text-muted">@item.GelisTarihi.ToShortDateString()</td>
+                                    <td class="fw-bold text-dark">@item.Firma</td>
+                                    <td>
+                                        <div class="fw-bold text-primary">@item.UrunAdi</div>
+                                        <span class="badge bg-light text-dark border">LOT: @item.LotNo</span>
+                                    </td>
+                                    <td class="text-center text-muted">@item.GelenKg.ToString("N1")</td>
+                                    <td class="text-center fw-bold fs-5 text-success">@item.KalanKg.ToString("N1") <small class="fs-6">kg</small></td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-danger fw-bold" onclick="stokDusModal(@item.Id, '@item.UrunAdi', @item.KalanKg)">
+                                            <i class="fas fa-minus-circle"></i> KULLAN
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="stokDusModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h6 class="modal-title fw-bold">İplik Kullanımı</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted mb-1" id="modalUrunAdi">Ürün...</p>
+                <h4 class="text-center fw-bold text-danger mb-3" id="modalKalan">0 KG</h4>
+                
+                <label class="small fw-bold">Kullanılan Miktar (KG)</label>
+                <input type="number" id="kullanilanMiktar" class="form-control fw-bold text-center border-danger" placeholder="0.00">
+                <input type="hidden" id="seciliId">
+            </div>
+            <div class="modal-footer p-1">
+                <button type="button" class="btn btn-danger w-100 fw-bold" onclick="stokDusOnayla()">ONAYLA & DÜŞ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var stokModal;
+    
+    function stokDusModal(id, ad, kalan) {
+        document.getElementById('seciliId').value = id;
+        document.getElementById('modalUrunAdi').innerText = ad;
+        document.getElementById('modalKalan').innerText = kalan + " KG Mevcut";
+        document.getElementById('kullanilanMiktar').value = "";
+        
+        stokModal = new bootstrap.Modal(document.getElementById('stokDusModal'));
+        stokModal.show();
+    }
+
+    function stokDusOnayla() {
+        var id = document.getElementById('seciliId').value;
+        var miktar = document.getElementById('kullanilanMiktar').value;
+
+        if(!miktar || miktar <= 0) { alert("Lütfen geçerli miktar girin!"); return; }
+
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append("dusulenMiktar", miktar);
+
+        fetch('/Depo/IplikDus', { method: 'POST', body: formData })
+        .then(response => {
+            if(response.ok) {
+                location.reload(); // Sayfayı yenile
+            } else {
+                alert("Yetersiz Stok veya Hata!");
+            }
+        });
+    }
+</script>

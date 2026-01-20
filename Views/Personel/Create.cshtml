@@ -1,0 +1,40 @@
+@model WorkFlowApp.Models.AppUser
+@{ ViewData["Title"] = "Yeni Personel Ekle"; }
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i> Yeni Personel Kaydı</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Kullanıcı Adı</label>
+                        <input asp-for="Username" class="form-control" placeholder="Örn: ahmet123" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Şifre</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Ad Soyad</label>
+                        <input asp-for="FullName" class="form-control" placeholder="Örn: Ahmet Yılmaz" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Yetki Rolü</label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="Admin">Admin (Tam Yetki)</option>
+                            <option value="Personel">Personel (Sadece Depo)</option>
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">İptal</a>
+                    <button type="submit" class="btn btn-success px-4">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

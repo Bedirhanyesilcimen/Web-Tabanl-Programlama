@@ -1,0 +1,65 @@
+@model List<WorkFlowApp.Models.PaketlemeStok>
+@{ ViewData["Title"] = "Paketleme ve Sevkiyat Stokları"; }
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        @* *@
+        @if (User.IsInRole("Admin") || User.IsInRole("Depo"))
+        {
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white">Yeni Paket Kaydı</div>
+                    <form asp-action="PaketEkle" method="post" enctype="multipart/form-data" class="card-body">
+                        <div class="mb-3">
+                            <label class="small fw-bold">Ürün Adı</label>
+                            <input type="text" name="urunAdi" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold">Miktar</label>
+                            <input type="number" name="miktar" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold">Barkod / Etiket Görseli</label>
+                            <input type="file" name="dosya" class="form-control" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Stoka Ekle</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        @*  *@
+        <div class="@((User.IsInRole("Admin") || User.IsInRole("Depo")) ? "col-md-8" : "col-md-12")">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white">Mevcut Stoklar</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Görsel</th>
+                                <th>Ürün Adı</th>
+                                <th>Miktar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.DosyaYolu)) {
+                                            <img src="@item.DosyaYolu" style="width:50px; height:50px; object-fit:cover;" class="rounded border" />
+                                        } else {
+                                            <span class="text-muted small">Yok</span>
+                                        }
+                                    </td>
+                                    <td class="fw-bold">@item.UrunAdi</td>
+                                   <td><span class="badge bg-info text-dark">@item.Kalan Adet</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

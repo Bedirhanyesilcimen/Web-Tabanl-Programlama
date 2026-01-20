@@ -1,0 +1,51 @@
+@model List<WorkFlowApp.Models.PaketlemeStok>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-@ViewData["Renk"] text-white fw-bold">
+        @ViewData["Baslik"]
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0 align-middle table-bordered">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th class="text-start" style="width: 30%;">Ürün Adı</th>
+                        <th class="bg-light text-secondary" style="width: 10%;">Devir</th>
+                        <th class="text-primary" style="width: 15%;">Giriş</th>
+                        <th class="text-warning" style="width: 15%;">İade</th>
+                        <th class="text-danger" style="width: 15%;">Çıkış</th>
+                        <th class="bg-light text-dark fw-bold" style="width: 15%;">KALAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                <i>Bu kategoride henüz veri yok. Excel yükleyiniz.</i>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach(var item in Model) {
+                            <tr>
+                                <td class="fw-bold text-dark ps-2">@item.UrunAdi</td>
+                                
+                                <td class="text-center text-secondary fw-bold bg-light">@item.Devir</td>
+
+                                <td><input type="number" class="form-control form-control-sm text-center border-primary fw-bold text-primary" value="@item.Giris" onchange="hareketGuncelle(this, @item.Id, 'Giris')"></td>
+
+                                <td><input type="number" class="form-control form-control-sm text-center border-warning fw-bold text-warning" value="@item.Iade" onchange="hareketGuncelle(this, @item.Id, 'Iade')"></td>
+
+                                <td><input type="number" class="form-control form-control-sm text-center border-danger fw-bold text-danger" value="@item.Cikis" onchange="hareketGuncelle(this, @item.Id, 'Cikis')"></td>
+
+                                <td class="text-center fw-bold fs-6 bg-light" id="kalan-@item.Id">@item.Kalan.ToString("N0")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

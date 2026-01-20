@@ -1,0 +1,79 @@
+@model List<WorkFlowApp.Models.KaplamaVeri>
+@{ ViewData["Title"] = "Kaplama Bölümü"; }
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">Kaplama Üretim Takibi</h5>
+            @if (!User.IsInRole("GenelMudur")) {
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kayitModal">Yeni Veri Girişi</button>
+            }
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Makine</th>
+                        <th>Vardiya</th>
+                        <th>Ürün Grubu</th>
+                        <th>Miktar</th>
+                        <th>Postabaşı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
+                            <td>@item.Makine</td>
+                            <td><span class="badge bg-secondary">@item.Vardiya</span></td>
+                            <td>@item.UrunGrubu</td>
+                            <td class="fw-bold text-primary">@item.Miktar</td>
+                            <td>@item.Personel</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kayitModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="VeriKaydet" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Üretim Verisi Gir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Makine No</label>
+                    <input type="text" name="Makine" class="form-control" placeholder="Örn: K-01" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Vardiya</label>
+                    <select name="Vardiya" class="form-select">
+                        <option value="Sabah (07:00 - 15:00)">Sabah</option>
+                        <option value="Akşam (15:00 - 23:00)">Akşam</option>
+                        <option value="Gece (23:00 - 07:00)">Gece</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ürün Grubu</label>
+                    <input type="text" name="UrunGrubu" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Üretim Miktarı</label>
+                    <input type="number" step="0.01" name="Miktar" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Postabaşı (İsim)</label>
+                    <input type="text" name="Personel" class="form-control" value="@User.Identity.Name" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success w-100">KAYDET</button>
+            </div>
+        </form>
+    </div>
+</div>
