@@ -21,7 +21,6 @@ namespace WorkFlowApp.Controllers
         [HttpGet]
         public IActionResult SiparisVer()
         {
-            // Genel Müdür bu sayfaya erişmeye çalışırsa listeye geri atılır.
             if (User.IsInRole("GenelMudur"))
             {
                 return RedirectToAction("BekleyenSiparisler");
@@ -76,8 +75,6 @@ namespace WorkFlowApp.Controllers
         {
             var talep = _context.SatinalmaTalepleri.Find(id);
             if (talep == null) return NotFound();
-
-            // Sadece ilgili roller durumu güncelleyebilir
             if (User.IsInRole("GenelMudur") && talep.Durum == "Genel Müdür Onayında")
                 talep.Durum = "Muhasebe Sipariş Geçti";
             else if (User.IsInRole("Muhasebe") && talep.Durum == "Muhasebe Sipariş Geçti")
