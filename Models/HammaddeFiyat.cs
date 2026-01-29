@@ -14,7 +14,7 @@ namespace WorkFlowApp.Models
         public decimal BirimFiyat { get; set; }
 
         [Display(Name = "Para Birimi")]
-        public string ParaBirimi { get; set; } = "USD"; // USD, EUR, TL
+        public string ParaBirimi { get; set; } = "USD";
         
         public DateTime GuncellemeTarihi { get; set; } = DateTime.Now;
     }
