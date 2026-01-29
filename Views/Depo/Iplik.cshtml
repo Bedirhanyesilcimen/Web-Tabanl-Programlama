@@ -134,7 +134,7 @@
         fetch('/Depo/IplikDus', { method: 'POST', body: formData })
         .then(response => {
             if(response.ok) {
-                location.reload(); // Sayfayı yenile
+                location.reload();
             } else {
                 alert("Yetersiz Stok veya Hata!");
             }
