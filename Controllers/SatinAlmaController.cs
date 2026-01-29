@@ -23,7 +23,6 @@ namespace WorkFlowApp.Controllers
         [HttpPost]
         public IActionResult TalepOlustur(SatinalmaTalep model)
         {
-            // Yeni modelimizde hem Tarih hem TalepTarihi var, ikisini de set ediyoruz
             model.TalepTarihi = DateTime.Now;
             model.Tarih = DateTime.Now; 
             model.Durum = "Genel Müdür Onayında";
