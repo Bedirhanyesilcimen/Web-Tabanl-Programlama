@@ -12,7 +12,6 @@ namespace WorkFlowApp.Controllers
         [Route("Sifirla")]
         public IActionResult Index()
         {
-            // Kullanıcı yoksa ekle
             if (!_context.AppUsers.Any())
             {
                 _context.AppUsers.Add(new AppUser { FullName="Yönetici", Username="admin", Password="123", Role="Admin" });
