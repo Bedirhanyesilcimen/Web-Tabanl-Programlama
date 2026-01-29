@@ -91,13 +91,9 @@
 <script>
     function tabloFiltrele(inputId) {
         var filter = document.getElementById(inputId).value.toUpperCase();
-        
-        // Tabloyu filtrele
         document.querySelectorAll("#uretimTablo tbody tr").forEach(row => {
             row.style.display = row.innerText.toUpperCase().includes(filter) ? "" : "none";
         });
-
-        // Makine kartlarını filtrele
         document.querySelectorAll(".makine-item").forEach(card => {
             card.style.display = card.innerText.toUpperCase().includes(filter) ? "" : "none";
         });
