@@ -5,7 +5,6 @@
     <tr>
         <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
         <td>
-            @* Sayısal karşılaştırmaları tırnağa alıyoruz *@
             @if (item.Durum == "Genel Müdür Onayında" || item.Durum == "0")
             {
                 <span class="badge bg-warning">GM Onayı Bekliyor</span>
