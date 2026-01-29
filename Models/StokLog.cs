@@ -8,7 +8,7 @@ namespace WorkFlowApp.Models
         [Key]
         public int Id { get; set; }
         public string UrunAdi { get; set; } = string.Empty;
-        public string IslemTuru { get; set; } = string.Empty; // Giris veya Cikis
+        public string IslemTuru { get; set; } = string.Empty;
         public int Miktar { get; set; } = 0;
         public string Aciklama { get; set; } = string.Empty;
         public DateTime Tarih { get; set; } = DateTime.Now;
