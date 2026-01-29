@@ -88,18 +88,15 @@
 </div>
 
 <script>
-    // İstisna kutucuğuna basınca kilidi açan kod
     function kilitAc() {
         var checkbox = document.getElementById('istisnaCheck');
         var input = document.getElementById('koliIciInput');
 
         if (checkbox.checked) {
-            // Kilidi kaldır, rengi beyaz yap
             input.removeAttribute('readonly');
             input.style.backgroundColor = "white";
             input.focus(); // İmleci oraya odakla
         } else {
-            // Kilidi geri tak, rengi gri yap, değeri 240'a döndür
             input.setAttribute('readonly', true);
             input.style.backgroundColor = "#e9ecef";
             input.value = "240";
