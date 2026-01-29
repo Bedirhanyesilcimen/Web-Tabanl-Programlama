@@ -6,9 +6,9 @@ namespace WorkFlowApp.Models
     {
         [Key]
         public int Id { get; set; }
-        public int MusteriId { get; set; } // Hangi müşterinin listesi?
-        public string DosyaYolu { get; set; } = string.Empty; // PDF/Excel dosyasının adı
-        public string Aciklama { get; set; } = string.Empty; // "Ocak 2025 Fiyatları"
+        public int MusteriId { get; set; } 
+        public string DosyaYolu { get; set; } = string.Empty; 
+        public string Aciklama { get; set; } = string.Empty; 
         public DateTime YuklemeTarihi { get; set; } = DateTime.Now;
     }
 }
