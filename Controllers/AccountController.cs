@@ -28,7 +28,6 @@ namespace WorkFlowApp.Controllers
         {
             _context.Database.EnsureCreated();
 
-            // Admin kontrolü ve oluşturma
             if (!_context.AppUsers.Any())
             {
                 _context.AppUsers.Add(new AppUser { Username = "admin", Password = "1234", Role = "Admin", FullName = "Sistem Yöneticisi" });
@@ -39,7 +38,6 @@ namespace WorkFlowApp.Controllers
 
             if (user != null)
             {
-                // PERSONEL SAYFASININ İSTEDİĞİ VERİYİ BURADA YAZIYORUZ:
                 HttpContext.Session.SetString("Role", user.Role);
                 HttpContext.Session.SetString("Username", user.Username);
 
