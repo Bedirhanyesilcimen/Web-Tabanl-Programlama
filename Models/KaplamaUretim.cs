@@ -9,13 +9,9 @@ namespace WorkFlowApp.Models
         public int Id { get; set; }
         public DateTime Tarih { get; set; } = DateTime.Now;
         public string Aciklama { get; set; } = string.Empty;
-
-        // --- MÜDÜR EKRANI İÇİN GEREKENLER ---
         public string UrunAdi { get; set; } = string.Empty;
         public string Operator { get; set; } = string.Empty;
         public int Adet { get; set; } = 0;
-
-        // --- KAPLAMA SAYFASININ İSTEDİĞİ DETAYLAR (HATALARI ÇÖZEN KISIM) ---
         public string HammaddeTuru { get; set; } = string.Empty;
         public string UrunModeli { get; set; } = string.Empty;
         public int MiktarCift { get; set; } = 0;
